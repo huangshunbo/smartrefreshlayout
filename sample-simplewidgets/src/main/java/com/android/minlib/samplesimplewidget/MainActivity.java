@@ -1,48 +1,73 @@
 package com.android.minlib.samplesimplewidget;
 
-import android.Manifest;
-import android.app.Application;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.Toast;
 
-import com.android.minlib.samplesimplewidget.tab.RefreshLayoutActivity;
+import com.android.minlib.samplesimplewidget.tab.TestBean;
+import com.android.minlib.smartrefreshlayout.recycler.OnSmartFillListener;
+import com.android.minlib.smartrefreshlayout.recycler.SmartRecyclerView;
+import com.android.minlib.smartrefreshlayout.recycler.ViewHolder;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
+import java.util.ArrayList;
+import java.util.List;
 
-    public static Application application;
+public class MainActivity extends AppCompatActivity {
 
-    ListView mListView;
-    private static final String[] strs =
-            {
-                    "RefreshLayout + TabViewPagerManager + FilterBar"
 
-            };
+    SmartRecyclerView smartRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        application = getApplication();
-        mListView = new ListView(this);
-        mListView.setAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, strs));
-        mListView.setOnItemClickListener(this);
-        setContentView(mListView);
+        setContentView(R.layout.fragment_tag_two_refresh);
+        smartRecyclerView = findViewById(R.id.smart_recyclerview);
 
+        smartRecyclerView.setDiver(5,R.drawable.line_left_margin);
+        smartRecyclerView.setOnSmartFillListener(new MySmartFillListener());
+        smartRecyclerView.setMode(SmartRecyclerView.STATE_MODE.BOTH);
+        smartRecyclerView.loadData();
+        smartRecyclerView.setRefreshHeader(new MyHeaderView(this));
     }
-    private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.CALL_PHONE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
+    boolean flag = false;
+    class MySmartFillListener implements OnSmartFillListener<TestBean> {
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        switch(position){
-            case 0:
-                startActivity(new Intent(this,RefreshLayoutActivity.class));
-                break;
+        @Override
+        public void onLoadData(final int taskId, int pageIndex) {
+            smartRecyclerView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    List<TestBean> list = new ArrayList<>();
+                    if(flag){
+                        list.add(new TestBean("HUANGSHUNBO",27,true));
+                        list.add(new TestBean("HUANGSHUNBO",27,true));
+                        list.add(new TestBean("HUANGSHUNBO",27,true));
+                    }
+                    flag = true;
+                    smartRecyclerView.showData(taskId,list,20);
+                }
+            },2000);
+        }
+
+        @Override
+        public void clickItem(int viewId, TestBean item, int position) {
+            Toast.makeText(MainActivity.this, "item click : " + position, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public int createLayout() {
+            return R.layout.item_recycler;
+        }
+
+        @Override
+        public void createListItem(int viewId, ViewHolder holder, TestBean currentItem, List<TestBean> list, int position) {
+            holder.setText(R.id.item_recycler_title,currentItem.getName());
+            holder.setText(R.id.item_recycler_subtitle,""+currentItem.getAge());
+        }
+
+        @Override
+        public void onLastPageHint() {
+
         }
     }
 
