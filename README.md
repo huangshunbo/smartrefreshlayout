@@ -1,6 +1,8 @@
 #### Summary
 ---
-使用 [SmartRefreshLayout](https://github.com/scwang90/SmartRefreshLayout) 封装的一个下拉刷新库，加入了 [情感图](https://github.com/huangshunbo/reloadtipview)
+使用 [SmartRefreshLayout](https://github.com/scwang90/SmartRefreshLayout) 封装的一个下拉刷新库，加入了 [情感图](https://github.com/huangshunbo/reloadtipview),
+SmartRecyclerView使用SmartRefreshLayout + RecyclerView + ReloadTipView 封装成一个包含情感图的常用上下拉列表
+
 
 #### Getting Started
 ---
@@ -91,6 +93,8 @@ class MySmartFillListener implements OnSmartFillListener<TestBean> {
     }
 }
 ```
+PS:loadData会调用onLoadData，建议在onCreate后使用loadData来触发onLoadData来获取第一批数据。SmartRecyclerView用showData来提供需要显示的数据，最后一个参数需要传入整体的数据量条数。
+
 
 一个丑不拉吉的自定义Header示例，Footer也类似(extends InternalAbstract implements RefreshFooter)
 ```Java
