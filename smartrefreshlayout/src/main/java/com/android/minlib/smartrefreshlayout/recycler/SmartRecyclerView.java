@@ -209,6 +209,15 @@ public class SmartRecyclerView<T> extends FrameLayout implements OnRefreshLoadMo
         mSmartRefreshLayout.setNoMoreData(false);
     }
 
+    public SmartRefreshLayout getSmartRefreshLayout() {
+        return mSmartRefreshLayout;
+    }
+
+    public void finishLoadMoreOrRefresh(){
+        mSmartRefreshLayout.finishLoadMore();
+        mSmartRefreshLayout.finishRefresh();
+    }
+
     public enum STATE_MODE {
         NONE, REFRESH, MORE, BOTH
     }
