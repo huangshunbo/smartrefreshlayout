@@ -1,2 +1,1 @@
 include ':sample-simplewidgets', ':smartrefreshlayout'
-rootProject.name = 'smartrefreshlayout'
