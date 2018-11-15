@@ -43,7 +43,6 @@ public class SmartRecyclerView<T> extends FrameLayout implements OnRefreshLoadMo
     private static final int ACTION_REFRESH = 2;
     private int taskId = ACTION_REFRESH;
     private int pageIndex = 1;
-    private int mTotal = -1;
 
     ReloadTipView mReloadTipView;
 
@@ -137,24 +136,28 @@ public class SmartRecyclerView<T> extends FrameLayout implements OnRefreshLoadMo
         this.onSmartFillListener.onLoadData(taskId, pageIndex);
     }
 
-    public void showData(int taskId, List<T> list, int total) {
+    public void showData(int taskId, List<T> list) {
         mSmartRefreshLayout.finishRefresh();
         mSmartRefreshLayout.finishLoadMore();
-        if (list == null || list.size() <= 0) {
-            showNoData();
-            return;
-        }
         mSmartRefreshLayout.setVisibility(VISIBLE);
         mReloadTipView.setVisibility(GONE);
-
         if (taskId == ACTION_LOAD_MORE) {
+            if (list == null || list.size() <= 0) {
+                mSmartRefreshLayout.setNoMoreData(true);
+                mSmartRefreshLayout.finishLoadMore();
+                onSmartFillListener.onLastPageHint();
+                return;
+            }
             mSmartAdapter.addList(list);
         } else if (taskId == ACTION_REFRESH) {
+            if (list == null || list.size() <= 0) {
+                showNoData();
+                return;
+            }
             mSmartAdapter.setList(list);
         } else {
             throw new IllegalArgumentException("传入的taskId参数有误");
         }
-        mTotal = total;
     }
 
     public void showNoData() {
@@ -190,15 +193,7 @@ public class SmartRecyclerView<T> extends FrameLayout implements OnRefreshLoadMo
     @Override
     public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
         taskId = ACTION_LOAD_MORE;
-        if (mTotal < 0 || mTotal > mSmartAdapter.getItemCount()) {
-            onSmartFillListener.onLoadData(taskId, ++pageIndex);
-        } else {
-            mSmartRefreshLayout.setNoMoreData(true);
-            mSmartRefreshLayout.finishLoadMore();
-            onSmartFillListener.onLastPageHint();
-
-        }
-
+        onSmartFillListener.onLoadData(taskId, ++pageIndex);
     }
 
     @Override
@@ -213,7 +208,7 @@ public class SmartRecyclerView<T> extends FrameLayout implements OnRefreshLoadMo
         return mSmartRefreshLayout;
     }
 
-    public void finishLoadMoreOrRefresh(){
+    public void finishLoadMoreOrRefresh() {
         mSmartRefreshLayout.finishLoadMore();
         mSmartRefreshLayout.finishRefresh();
     }

@@ -2,6 +2,7 @@ package com.android.minlib.samplesimplewidget;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.minlib.samplesimplewidget.tab.TestBean;
@@ -11,6 +12,7 @@ import com.android.minlib.smartrefreshlayout.recycler.ViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,17 +36,19 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onLoadData(final int taskId, int pageIndex) {
+            Log.d("hsb","pageIndex "+pageIndex);
             smartRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     List<TestBean> list = new ArrayList<>();
-                    if(flag){
+                    if(new Random().nextInt(20) > 2){
                         list.add(new TestBean("HUANGSHUNBO",27,true));
                         list.add(new TestBean("HUANGSHUNBO",27,true));
                         list.add(new TestBean("HUANGSHUNBO",27,true));
+                    }else{
+                        list = null;
                     }
-                    flag = true;
-                    smartRecyclerView.showData(taskId,list,20);
+                    smartRecyclerView.showData(taskId,list);
                 }
             },2000);
         }
